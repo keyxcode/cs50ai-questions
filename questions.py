@@ -1,22 +1,19 @@
 import nltk
 import sys
+import os
 
 FILE_MATCHES = 1
 SENTENCE_MATCHES = 1
 
 
 def main():
-
     # Check command-line arguments
     if len(sys.argv) != 2:
         sys.exit("Usage: python questions.py corpus")
 
     # Calculate IDF values across files
     files = load_files(sys.argv[1])
-    file_words = {
-        filename: tokenize(files[filename])
-        for filename in files
-    }
+    file_words = {filename: tokenize(files[filename]) for filename in files}
     file_idfs = compute_idfs(file_words)
 
     # Prompt user for query
@@ -48,7 +45,12 @@ def load_files(directory):
     Given a directory name, return a dictionary mapping the filename of each
     `.txt` file inside that directory to the file's contents as a string.
     """
-    raise NotImplementedError
+    files = dict()
+    for filename in os.listdir(directory):
+        with open(os.path.join(directory, filename)) as f:
+            files[os.path.splitext(filename)[0]] = f.read()
+
+    return files
 
 
 def tokenize(document):
