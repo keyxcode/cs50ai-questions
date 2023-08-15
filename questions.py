@@ -1,9 +1,9 @@
 import nltk
-from nltk.corpus import stopwords
 from nltk.tokenize import wordpunct_tokenize
 import sys
 import os
 import string
+import math
 
 FILE_MATCHES = 1
 SENTENCE_MATCHES = 1
@@ -87,7 +87,31 @@ def compute_idfs(documents):
     Any word that appears in at least one of the documents should be in the
     resulting dictionary.
     """
-    raise NotImplementedError
+    num_documents = len(documents)
+
+    words_from_documents = list(documents.values())
+    word_to_frequency = dict()
+    for idx, words in enumerate(words_from_documents):
+        unique_words = (word for word in words)
+        words_from_remaining_documents = words_from_documents[idx:]
+        for word in unique_words:
+            if word in word_to_frequency:
+                continue
+            word_to_frequency[word] = 0
+            for words_from_other_document in words_from_remaining_documents:
+                if word in words_from_other_document:
+                    word_to_frequency[word] += 1
+
+    common_word_to_frequency = {k: v for k, v in word_to_frequency.items() if v != 0}
+    common_word_to_idf = {
+        k: math.log(num_documents / v) for k, v in common_word_to_frequency.items()
+    }
+
+    # with open("words.txt", "w") as f:
+    #     for word in common_word_to_idf:
+    #         f.write(f"{word}:{common_word_to_idf[word]}\n")
+
+    return common_word_to_idf
 
 
 def top_files(query, files, idfs, n):
