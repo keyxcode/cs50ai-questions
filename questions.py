@@ -8,6 +8,8 @@ import math
 FILE_MATCHES = 1
 SENTENCE_MATCHES = 1
 
+nltk.download("punkt")
+
 nltk.download("stopwords")
 STOP_WORDS = nltk.corpus.stopwords.words("english")
 PUNCTUATIONS = string.punctuation
@@ -121,7 +123,24 @@ def top_files(query, files, idfs, n):
     to their IDF values), return a list of the filenames of the the `n` top
     files that match the query, ranked according to tf-idf.
     """
-    raise NotImplementedError
+    file_to_tfidf = {}
+
+    for file in files:
+        file_to_tfidf[file] = 0
+
+        for word in query:
+            tf = files[file].count(word)
+            if word in idfs:
+                idf = idfs[word]
+            else:
+                idf = 0
+            file_to_tfidf[file] += tf * idf
+
+    sorted_files_tfidf = sorted(
+        file_to_tfidf.items(), key=lambda item: item[1], reverse=True
+    )
+
+    return [file[0] for file in sorted_files_tfidf][:n]
 
 
 def top_sentences(query, sentences, idfs, n):
