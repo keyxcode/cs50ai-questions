@@ -130,10 +130,7 @@ def top_files(query, files, idfs, n):
 
         for word in query:
             tf = files[file].count(word)
-            if word in idfs:
-                idf = idfs[word]
-            else:
-                idf = 0
+            idf = idfs.get(word, 0)
             file_to_tfidf[file] += tf * idf
 
     sorted_files_tfidf = sorted(
@@ -151,7 +148,21 @@ def top_sentences(query, sentences, idfs, n):
     the query, ranked according to idf. If there are ties, preference should
     be given to sentences that have a higher query term density.
     """
-    raise NotImplementedError
+    sentence_map = {sentence: {"idf": 0, "density": 0} for sentence in sentences}
+
+    for sentence in sentences:
+        for word in query:
+            idf = idfs.get(word, 0)
+            sentence_map[sentence]["idf"] += idf
+            sentence_map[sentence]["density"] += sentence.count(word)
+
+    sorted_sentences_idfs = sorted(
+        sentence_map.items(),
+        key=lambda item: (item[1]["idf"], item[1]["density"]),
+        reverse=True,
+    )
+
+    return [sentence[0] for sentence in sorted_sentences_idfs][:n]
 
 
 if __name__ == "__main__":
