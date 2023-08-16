@@ -1,5 +1,5 @@
 import nltk
-from nltk.tokenize import wordpunct_tokenize
+from nltk.tokenize import word_tokenize
 import sys
 import os
 import string
@@ -12,6 +12,7 @@ nltk.download("punkt")
 
 nltk.download("stopwords")
 STOP_WORDS = nltk.corpus.stopwords.words("english")
+
 PUNCTUATIONS = string.punctuation
 
 
@@ -70,12 +71,10 @@ def tokenize(document):
     Process document by coverting all words to lowercase, and removing any
     punctuation or English stopwords.
     """
-    words = wordpunct_tokenize(document)
+    words = word_tokenize(document.lower())
 
     processed_words = [
-        word.lower()
-        for word in words
-        if word not in STOP_WORDS and all(letter not in PUNCTUATIONS for letter in word)
+        word for word in words if word not in STOP_WORDS and word not in PUNCTUATIONS
     ]
 
     return processed_words
