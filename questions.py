@@ -92,6 +92,7 @@ def compute_idfs(documents):
 
     words_from_documents = list(documents.values())
     word_to_frequency = dict()
+
     for idx, words in enumerate(words_from_documents):
         unique_words = (word for word in words)
         words_from_remaining_documents = words_from_documents[idx:]
@@ -150,10 +151,16 @@ def top_sentences(query, sentences, idfs, n):
     sentence_map = {sentence: {"idf": 0, "density": 0} for sentence in sentences}
 
     for sentence in sentences:
+        num_word_in_sentence = 0
         for word in query:
             idf = idfs.get(word, 0)
-            sentence_map[sentence]["idf"] += idf
-            sentence_map[sentence]["density"] += sentence.count(word)
+            if word in sentences[sentence]:
+                sentence_map[sentence]["idf"] += idf
+
+            num_word_in_sentence += sentence.count(word)
+        sentence_map[sentence]["density"] = num_word_in_sentence / len(
+            sentences[sentence]
+        )
 
     sorted_sentences_idfs = sorted(
         sentence_map.items(),
