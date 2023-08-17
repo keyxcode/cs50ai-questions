@@ -143,12 +143,14 @@ def top_sentences(query, sentences, idfs, n):
 
     for sentence in sentences:
         num_word_in_sentence = 0
+
         for word in query:
             idf = idfs.get(word, 0)
             if word in sentences[sentence]:
                 sentence_map[sentence]["idf"] += idf
 
             num_word_in_sentence += sentence.count(word)
+
         sentence_map[sentence]["density"] = num_word_in_sentence / len(
             sentences[sentence]
         )
