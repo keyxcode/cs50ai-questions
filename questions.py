@@ -93,17 +93,16 @@ def compute_idfs(documents):
     unique_words = set(
         word for document_words in documents.values() for word in document_words
     )
-    word_to_frequency = dict()
     word_to_idf = dict()
 
     for word in unique_words:
-        word_to_frequency[word] = 0
+        word_count = 0
 
-        for document in documents:
-            if word in documents[document]:
-                word_to_frequency[word] += 1
+        for document_word in documents.values():
+            if word in document_word:
+                word_count += 1
 
-        word_to_idf[word] = math.log(num_documents / word_to_frequency[word])
+        word_to_idf[word] = math.log(num_documents / word_count)
 
     return word_to_idf
 
